@@ -56,7 +56,7 @@ public class TimeServlet extends HttpServlet {
                 "Дата: yyyy-MM-dd, Час: HH:mm:ss, z"
         ));
 
-        resp.getWriter().write("<html><body><h1>" + currentFormatTime + "</h1></body></html>");
+        resp.getWriter().write(currentFormatTime);
 
         resp.getWriter().close();
     }
