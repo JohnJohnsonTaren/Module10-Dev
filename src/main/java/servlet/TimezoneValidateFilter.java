@@ -33,8 +33,8 @@ public class TimezoneValidateFilter implements Filter {
 
             if (!isValidTimezone) {
                 httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                httpResponse.setContentType("text/plain");
-                httpResponse.getWriter().println("Invalid timezone");
+                httpResponse.setContentType("text/html; charset=UTF-8");
+                httpResponse.getWriter().println("<html><body><h1>Invalid timezone</h1></body></html>");
                 return;
             }
         }
