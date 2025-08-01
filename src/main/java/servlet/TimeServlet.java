@@ -25,6 +25,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.DateTimeException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,19 +37,25 @@ public class TimeServlet extends HttpServlet {
         resp.setContentType("text/html; charset=utf-8");
 
         String timezoneParam = req.getParameter("timezone");
-        ZoneId zoneId;
+        ZoneId zoneId = ZoneId.of("UTC");
+        ;
 
-        if (timezoneParam != null && !timezoneParam.trim().isEmpty()) {
-            String processedTimezone = timezoneParam.trim();
-
-            if (processedTimezone.startsWith("UTC ") && processedTimezone.length() > 4
-                    && Character.isDigit(processedTimezone.charAt(4))) {
-                processedTimezone = "UTC+" + processedTimezone.substring(4);
+        if (timezoneParam != null && !timezoneParam.isBlank()) {
+            try {
+                String processedTimezone = timezoneParam.trim();
+                if (processedTimezone.startsWith("UTC ") && processedTimezone.length() > 4
+                        && Character.isDigit(processedTimezone.charAt(4))) {
+                    processedTimezone = "UTC+" + processedTimezone.substring(4);
+                }
+                zoneId = ZoneId.of(processedTimezone);
+            } catch (DateTimeException e) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.setContentType("text/html; charset=UTF-8");
+                resp.getWriter().println("<html><body><h1>Invalid timezone</h1></body></html>");
+                return;
             }
-            zoneId = ZoneId.of(processedTimezone);
-        } else {
-            zoneId = ZoneId.of("UTC");
         }
+
 
         ZonedDateTime currentTimeInZone = ZonedDateTime.now(zoneId);
 
